@@ -4,7 +4,7 @@ use std::io::BufReader;
 use std::io::prelude::*;
 use std::path::Path;
 
-fn main() {
+fn main() { 
 
     //Day 1 Input
     let lines: Vec<String> = get_input("./src/input1.txt");
@@ -48,9 +48,18 @@ fn fuel_tally(data : &[String])
     println!("**Total is: {}**",total)
 }
 
-fn fuel_fuel_tally(lines : &[String])
+fn fuel_fuel_tally(data : &[String])
 {
-    // for l in *lines {
-
-    // }
+    let mut total: f64 = 0.0;
+    let lines = data;
+    for l in lines {
+        //iterator returns a Result<T,E> where E is the error
+        
+        let mass = l.parse::<f64>().unwrap();
+        let fuel: f64 = (mass/3.0).floor()-2.0;
+        println!("Mass:{} \t-> Fuel:{}",&mass, &fuel);
+        total += fuel;
+        
+    }
+    println!("**Total is: {}**",total)
 }
