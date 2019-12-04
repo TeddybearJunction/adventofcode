@@ -93,7 +93,7 @@ fn calc_fuel(mass : f64) -> f64
     sub_total
 }
 
-///I want to take a flat array of i64s and look at them in groups of four UNTIL I run into a 99 in the 0th position of a subgroup
+//Day 2 Part 1 - intcode computer
 fn intcode_solver(data : &str)
 {
     let mut intcode : Vec<i64> = data.split(',').map(|i| i.parse::<i64>().expect("Invalid integer?")).collect();
@@ -104,14 +104,17 @@ fn intcode_solver(data : &str)
         let value : i64;
         match intcode[count]
         {
+            //if Instruction = 1, add
             1 => value = intcode[intcode[(count + 1) as usize] as usize] + intcode[intcode[(count + 2) as usize] as usize],
-
+            //if Instruction = 2, multiply
             2 => value = intcode[intcode[(count + 1) as usize] as usize] * intcode[intcode[(count + 2) as usize] as usize],
 
             _ => panic!("Bad input, release smoke")
         }
+        //Set the address to store the result and store it
         let location = intcode[(count + 3) as usize];
         intcode[location as usize] = value;
+        //Increment by 4 to get next opcode/Instruction
         count+=4;
     }
     println!("{:?}",intcode );
