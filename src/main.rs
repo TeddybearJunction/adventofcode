@@ -23,7 +23,10 @@ fn main() {
 
 
     //Day 2, Q1
-    intcode_solver(&lines);
+    //intcode_solver(&lines);
+
+    //Day 2, Q2
+        noun_verb_finder(&lines);
 
     
 
@@ -94,9 +97,9 @@ fn calc_fuel(mass : f64) -> f64
 }
 
 //Day 2 Part 1 - intcode computer
-fn intcode_solver(data : &str)
+fn intcode_solver(mut intcode : Vec<i64>) -> Vec<i64>
 {
-    let mut intcode : Vec<i64> = data.split(',').map(|i| i.parse::<i64>().expect("Invalid integer?")).collect();
+    
     let mut count : usize = 0;
     while intcode[count] != 99
     {
@@ -117,7 +120,41 @@ fn intcode_solver(data : &str)
         //Increment by 4 to get next opcode/Instruction
         count+=4;
     }
-    println!("{:?}",intcode );
+    //println!("{:?}",intcode );
     
+    intcode
+    
+
+}
+
+//Iterate through possible inputs until desired solution is found, answer is printed
+fn noun_verb_finder(data : &str)
+{
+    
+    let mut stop = false;   
+    let intcode : Vec<i64> = data.split(',').map(|i| i.parse::<i64>().expect("Invalid integer?")).collect();
+    
+    for n in 0..(intcode.len()-1) as i64
+    {
+        for v in 0..(intcode.len()-1) as i64
+        {
+            let mut intcode : Vec<i64> = data.split(',').map(|i| i.parse::<i64>().expect("Invalid integer?")).collect();
+            intcode[1] = n;
+            intcode[2] = v;
+            //Without clone, value borrowed after move error
+            let result : i64 = intcode_solver(intcode.clone())[0];
+            if  result == 19690720
+            {
+                println!("Eureka! {}",n*100+v);
+                stop = true;
+                break;
+            }
+        }
+        if stop
+        {
+            break;
+        }
+        
+    }
 
 }
