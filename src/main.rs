@@ -7,11 +7,24 @@ use std::path::Path;
 fn main() { 
 
     //Day 1 Input
-    let lines: Vec<String> = get_input("./src/input1.txt");
+    //let lines: Vec<String> = get_input("./src/input1.txt");
     //Day 1, Q1
-    fuel_tally(&lines);
+    //fuel_tally(&lines);
     //Day 1, Q2
-    fuel_fuel_tally(&lines)
+    //fuel_fuel_tally(&lines)
+    
+    //Day 2 Input
+    let test_mode = false;
+    let lines = if !test_mode {
+        get_input("./src/input2.txt")[0].clone()
+    } else {
+        String::from("1,9,10,3,2,3,11,0,99,30,40,50")
+    };
+
+
+    //Day 2, Q1
+    intcode_solver(&lines);
+
     
 
 }
@@ -56,10 +69,52 @@ fn fuel_fuel_tally(data : &[String])
         //iterator returns a Result<T,E> where E is the error
         
         let mass = l.parse::<f64>().unwrap();
-        let fuel: f64 = (mass/3.0).floor()-2.0;
+        let fuel: f64 = calc_fuel(mass);
         println!("Mass:{} \t-> Fuel:{}",&mass, &fuel);
         total += fuel;
         
     }
     println!("**Total is: {}**",total)
+}
+fn calc_fuel(mass : f64) -> f64
+{
+    let mut sub_total : f64 = 0.0;
+    let fuel : f64 = (mass/3.0).floor()-2.0;
+    println!("{}",fuel);
+    sub_total += fuel;
+    if fuel > 0.0
+    {
+        let fuel_for_fuel : f64 = calc_fuel(fuel);
+        if fuel_for_fuel > 0.0
+        {
+            sub_total += fuel_for_fuel;
+        }
+    }
+    sub_total
+}
+
+///I want to take a flat array of i64s and look at them in groups of four UNTIL I run into a 99 in the 0th position of a subgroup
+fn intcode_solver(data : &str)
+{
+    let mut intcode : Vec<i64> = data.split(',').map(|i| i.parse::<i64>().expect("Invalid integer?")).collect();
+    let mut count : usize = 0;
+    while intcode[count] != 99
+    {
+
+        let value : i64;
+        match intcode[count]
+        {
+            1 => value = intcode[intcode[(count + 1) as usize] as usize] + intcode[intcode[(count + 2) as usize] as usize],
+
+            2 => value = intcode[intcode[(count + 1) as usize] as usize] * intcode[intcode[(count + 2) as usize] as usize],
+
+            _ => panic!("Bad input, release smoke")
+        }
+        let location = intcode[(count + 3) as usize];
+        intcode[location as usize] = value;
+        count+=4;
+    }
+    println!("{:?}",intcode );
+    
+
 }
